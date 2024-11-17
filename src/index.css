@@ -1,0 +1,192 @@
+/* Reset default styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Body styling */
+body {
+  background: linear-gradient(to bottom right, #1e3a8a, #4f46e5);
+  color: #f8fafc;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.light {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+body.dark {
+  background: #111827;
+  color: #f3f4f6;
+}
+
+.theme-button,
+.restart-button {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Styling untuk kotak pemenang */
+.winning-square {
+  background-color: #22c55e; /* Warna hijau */
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0px 0px 15px rgba(34, 197, 94, 0.8); /* Efek pencahayaan */
+}
+
+.theme-button {
+  background: #2563eb;
+  color: #fff;
+}
+
+.theme-button:hover {
+  background: #3b82f6;
+}
+
+.restart-button {
+  background: #dc2626;
+  color: #fff;
+}
+
+.restart-button:hover {
+  background: #ef4444;
+}
+
+/* Game container styling */
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* Status styling */
+.status {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #f8fafc;
+}
+
+/* Styling for board and square */
+.board-row {
+  display: flex;
+  gap: 10px;
+}
+
+.settings-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.square {
+  height: 80px;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #f8fafc;
+  background-color: #4f46e5;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, background-color 0.3s;
+}
+
+.square:hover {
+  background-color: #6366f1;
+  transform: scale(1.1);
+}
+
+.square:active {
+  transform: scale(1.05);
+}
+
+/* Game info (history) */
+.game-info {
+  margin-top: 20px;
+}
+
+.game-info button {
+  padding: 10px 20px;
+  margin-bottom: 8px;
+  background-color: #1e3a8a;
+  color: #f8fafc;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-weight: 500;
+}
+
+.game-info button:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.game-info button:active {
+  transform: translateY(0);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .square {
+    height: 60px;
+    width: 60px;
+    font-size: 1.5rem;
+  }
+
+  .status {
+    font-size: 1.2rem;
+  }
+
+  .game-info button {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .game {
+    padding: 15px;
+  }
+
+  .square {
+    height: 50px;
+    width: 50px;
+    font-size: 1.2rem;
+  }
+
+  .status {
+    font-size: 1rem;
+  }
+
+  .game-info button {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+}
