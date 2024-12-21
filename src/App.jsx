@@ -81,20 +81,24 @@ Board.propTypes = {
   timer: PropTypes.number.isRequired,
 };
 
-// Komponen ini berfungsi untuk menampilkan game Tic Tac Toe
 function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
-  const [scores, setScores] = useState({ X: 0, O: 0 });
+  const [scores, setScores] = useState({ X: 0, O: 0, draws: 0 });
   const [theme, setTheme] = useState("light");
   const [timer, setTimer] = useState(10);
   const [customTime, setCustomTime] = useState(10);
   const [showSettings, setShowSettings] = useState(false);
+  const [firstPlayer, setFirstPlayer] = useState("X");
+  const [undoLimit] = useState(3);
+  const [undoCount, setUndoCount] = useState(0);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showTips, setShowTips] = useState(false);
 
-  const xIsNext = currentMove % 2 === 0;
+  const xIsNext =
+    currentMove % 2 === 0 ? firstPlayer === "X" : firstPlayer === "O";
   const currentSquares = history[currentMove];
 
-  // Timer logic
   useEffect(() => {
     if (timer === 0) {
       handlePlay(currentSquares.map((sq) => (sq === null ? " " : sq)));
@@ -113,19 +117,35 @@ function Game() {
     if (winner) {
       setScores((prevScores) => ({
         ...prevScores,
-        [winner]: prevScores[winner] + 1,
+        [winner.winner]: prevScores[winner.winner] + 1,
+      }));
+    } else if (nextSquares.every((sq) => sq !== null)) {
+      setScores((prevScores) => ({
+        ...prevScores,
+        draws: prevScores.draws + 1,
       }));
     }
+
     setHistory([...history.slice(0, currentMove + 1), nextSquares]);
     setCurrentMove(history.length);
     setTimer(customTime);
+    setUndoCount(0);
+  }
+
+  function undoMove() {
+    if (currentMove > 0 && undoCount < undoLimit) {
+      setCurrentMove(currentMove - 1);
+      setTimer(customTime);
+      setUndoCount(undoCount + 1);
+    }
   }
 
   function restartGame() {
     setHistory([Array(9).fill(null)]);
     setCurrentMove(0);
-    setScores({ X: 0, O: 0 });
+    setScores({ X: 0, O: 0, draws: 0 });
     setTimer(customTime);
+    setUndoCount(0);
   }
 
   function jumpTo(move) {
@@ -152,6 +172,14 @@ function Game() {
     setShowSettings(false);
   }
 
+  function toggleHelp() {
+    setShowHelp(!showHelp);
+  }
+
+  function toggleTips() {
+    setShowTips(!showTips);
+  }
+
   const moves = history.map((squares, move) => {
     const description = move ? "Go to move #" + move : "Go to game start";
     return (
@@ -175,11 +203,20 @@ function Game() {
         <button onClick={restartGame} className="restart-button">
           Restart Game
         </button>
+        <button onClick={undoMove} className="theme-button">
+          Undo Move (Limit: {undoLimit - undoCount})
+        </button>
         <button onClick={toggleTheme} className="theme-button">
           Toggle {theme === "light" ? "Dark" : "Light"} Mode
         </button>
         <button onClick={openSettings} className="theme-button">
           Settings
+        </button>
+        <button onClick={toggleHelp} className="theme-button">
+          Help
+        </button>
+        <button onClick={toggleTips} className="theme-button">
+          Tips & Tricks
         </button>
         {showSettings && (
           <div className="settings-modal">
@@ -190,6 +227,26 @@ function Game() {
               value={customTime}
               onChange={(e) => setCustomTime(e.target.value)}
             />
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  value="X"
+                  checked={firstPlayer === "X"}
+                  onChange={() => setFirstPlayer("X")}
+                />
+                X starts first
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="O"
+                  checked={firstPlayer === "O"}
+                  onChange={() => setFirstPlayer("O")}
+                />
+                O starts first
+              </label>
+            </div>
             <button onClick={saveSettings} className="theme-button">
               Save
             </button>
@@ -198,13 +255,46 @@ function Game() {
             </button>
           </div>
         )}
+        {showHelp && (
+          <div className="settings-modal">
+            <h2>How to Play</h2>
+            <p>
+              Tic-tac-toe is a simple game played on a 3x3 grid. Players take
+              turns placing their mark (X or O) in an empty square. The first
+              player to get three of their marks in a row (horizontally,
+              vertically, or diagonally) wins the game. If all squares are
+              filled without a winner, the game ends in a draw.
+            </p>
+            <button onClick={toggleHelp} className="restart-button">
+              Close
+            </button>
+          </div>
+        )}
+        {showTips && (
+          <div className="settings-modal">
+            <h2>Tips & Tricks</h2>
+            <ul>
+              <li>Always start in a corner if you go first.</li>
+              <li>Try to create a fork, giving you two ways to win.</li>
+              <li>Block your opponent from creating a fork.</li>
+              <li>
+                Pay attention to the center square; it’s a powerful position.
+              </li>
+              <li>If you can’t win, play to block your opponent.</li>
+            </ul>
+            <button onClick={toggleTips} className="restart-button">
+              Close
+            </button>
+          </div>
+        )}
         <div
           className="scores"
           style={{ marginTop: "20px", marginBottom: "20px" }}
         >
           <p>Score:</p>
-          <p>X: {scores.X}</p>
-          <p>O: {scores.O}</p>
+          <p>X: {scores.X} (Wins)</p>
+          <p>O: {scores.O} (Wins)</p>
+          <p>Draws: {scores.draws}</p>
         </div>
         <ol>{moves}</ol>
       </div>
